@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CoinCubo — Sua casa de análise no mundo cripto</title>
+<meta name="description" content="Research cripto em português. Conhecimento e ciência para entender o mercado de criptoativos, com dados e fontes. Assine a newsletter da CoinCubo.">
+<meta property="og:title" content="CoinCubo — Sua casa de análise no mundo cripto">
+<meta property="og:description" content="Research cripto em português, com dados e fontes. Assine a newsletter.">
+<meta property="og:image" content="assets/cubo.png">
+<link rel="icon" href="assets/cubo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700;800&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* Paleta do brand kit (brands/coincubo/BRAND.md), tirada do logo do cubo. */
+  :root {
+    --ink:#05050A; --surface:#0E0E18; --line:#1C1C2A; --text:#FFFFFF; --muted:#9A9AB0;
+    --pink:#EB499F; --violet:#840FEA; --blue:#3281EA; --cyan:#06C9DF; --up:#2FE39A; --down:#FF4D6A;
+    --topo: linear-gradient(120deg, var(--pink), var(--violet));
+    --lado: linear-gradient(120deg, var(--blue), var(--cyan));
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--ink); color:var(--text); font:17px/1.6 "Inter", system-ui, sans-serif; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  a { color:inherit; }
+  .wrap { max-width:1180px; margin:0 auto; padding:0 24px; }
+  h1, h2, h3, .num { font-family:"Inter Tight", "Inter", sans-serif; }
+  .destaque { color:var(--cyan); }
+  .gradiente { background:var(--topo); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  /* Brilhos de fundo: violeta no alto à esquerda, ciano embaixo à direita. Sutis. */
+  .luz { position:fixed; width:900px; height:900px; border-radius:50%; filter:blur(40px); pointer-events:none; z-index:-1; }
+  .luz.v { background:radial-gradient(circle, rgba(132,15,234,.20), transparent 62%); top:-420px; left:-360px; }
+  .luz.c { background:radial-gradient(circle, rgba(6,201,223,.13), transparent 62%); bottom:-460px; right:-380px; }
+  .grade { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.35;
+    background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:64px 64px; mask-image:radial-gradient(ellipse at 50% 20%, #000 10%, transparent 70%); }
+
+  /* Topo */
+  header { position:sticky; top:0; z-index:10; backdrop-filter:blur(14px); background:rgba(5,5,10,.72); border-bottom:1px solid rgba(28,28,42,.7); }
+  header .wrap { display:flex; align-items:center; justify-content:space-between; height:68px; }
+  .marca { display:flex; align-items:center; gap:10px; text-decoration:none; font-family:"Inter Tight"; font-weight:800; font-size:20px; letter-spacing:-.02em; }
+  .marca img { width:30px; height:30px; mix-blend-mode:lighten; }
+  nav { display:flex; align-items:center; gap:28px; font-size:15px; color:var(--muted); }
+  nav a { text-decoration:none; transition:color .15s; }
+  nav a:hover { color:var(--text); }
+  .botao { display:inline-flex; align-items:center; justify-content:center; gap:8px; border:0; cursor:pointer; text-decoration:none;
+    font:600 15px/1 "Inter"; color:var(--ink); background:var(--cyan); padding:14px 22px; border-radius:12px; transition:transform .15s, box-shadow .15s; }
+  .botao:hover { transform:translateY(-1px); box-shadow:0 10px 30px rgba(6,201,223,.28); }
+  .botao.fantasma { background:transparent; color:var(--text); border:1px solid var(--line); }
+  .botao.fantasma:hover { box-shadow:none; border-color:#2c2c40; }
+  nav .botao { padding:10px 16px; color:var(--ink); }
+
+  /* Abertura */
+  .abertura { padding-top:96px; padding-bottom:72px; display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center; }
+  .selo { display:inline-flex; align-items:center; gap:10px; font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
+    border:1px solid var(--line); background:rgba(14,14,24,.6); padding:8px 14px; border-radius:999px; }
+  .selo i { width:7px; height:7px; border-radius:50%; background:var(--up); box-shadow:0 0 10px var(--up); }
+  h1 { font-size:clamp(46px, 6.4vw, 84px); font-weight:800; line-height:.98; letter-spacing:-.035em; margin:26px 0 22px; }
+  .lead { font-size:20px; color:var(--muted); max-width:540px; }
+  .lead b { color:var(--text); font-weight:600; }
+
+  .form { margin-top:34px; display:flex; gap:10px; max-width:520px; background:var(--surface); border:1px solid var(--line); padding:8px; border-radius:16px; }
+  .form input { flex:1; min-width:0; background:transparent; border:0; outline:0; color:var(--text); font:16px "Inter"; padding:0 12px; }
+  .form input::placeholder { color:#6b6b82; }
+  .form:focus-within { border-color:rgba(6,201,223,.55); box-shadow:0 0 0 4px rgba(6,201,223,.10); }
+  .aviso { margin-top:12px; font-size:14px; color:var(--muted); min-height:22px; }
+  .aviso.ok { color:var(--up); } .aviso.erro { color:var(--down); }
+  .acoes { margin-top:18px; display:flex; gap:12px; flex-wrap:wrap; }
+
+  /* O cubo, flutuando, com os preços ao vivo em volta. */
+  .cena { position:relative; height:520px; }
+  .cena .cubo { position:absolute; left:50%; top:50%; width:340px; transform:translate(-50%,-50%); mix-blend-mode:lighten;
+    filter:drop-shadow(0 30px 80px rgba(132,15,234,.45)); animation:flutua 7s ease-in-out infinite; }
+  @keyframes flutua { 50% { transform:translate(-50%,-54%) rotate(-2deg); } }
+  .cartao { position:absolute; background:rgba(14,14,24,.82); backdrop-filter:blur(10px); border:1px solid var(--line); border-radius:16px; padding:14px 18px; min-width:168px;
+    box-shadow:0 20px 50px rgba(0,0,0,.45); animation:flutua2 8s ease-in-out infinite; }
+  .cartao:nth-of-type(2) { animation-delay:-2s; } .cartao:nth-of-type(3) { animation-delay:-4s; } .cartao:nth-of-type(4) { animation-delay:-6s; }
+  @keyframes flutua2 { 50% { transform:translateY(-10px); } }
+  .cartao small { display:block; font-size:12px; color:var(--muted); font-weight:500; }
+  .cartao .num { font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
+  .cartao .var { font-size:13px; font-weight:600; font-variant-numeric:tabular-nums; }
+  .var.sobe { color:var(--up); } .var.cai { color:var(--down); }
+  .c1 { top:30px; left:0; } .c2 { top:70px; right:0; } .c3 { bottom:70px; left:20px; } .c4 { bottom:24px; right:30px; }
+  .fonte { position:absolute; bottom:-6px; left:0; right:0; text-align:center; font-size:12px; font-style:italic; color:var(--muted); }
+
+  /* Seções */
+  section { padding:96px 0; }
+  .olho { font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--cyan); }
+  h2 { font-size:clamp(34px, 4.2vw, 54px); font-weight:800; line-height:1.02; letter-spacing:-.03em; margin:14px 0 16px; max-width:760px; }
+  .intro { color:var(--muted); font-size:18px; max-width:620px; }
+
+  .formatos { margin-top:48px; display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .formato { background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:30px; position:relative; overflow:hidden; }
+  .formato::before { content:""; position:absolute; inset:0 0 auto 0; height:2px; background:var(--lado); opacity:.9; }
+  .formato:nth-child(2)::before { background:var(--topo); }
+  .formato .ic { width:46px; height:46px; border-radius:12px; display:grid; place-items:center; background:rgba(6,201,223,.10); color:var(--cyan); font-size:22px; margin-bottom:20px; }
+  .formato:nth-child(2) .ic { background:rgba(235,73,159,.12); color:var(--pink); }
+  .formato h3 { font-size:22px; font-weight:700; letter-spacing:-.02em; margin-bottom:8px; }
+  .formato p { color:var(--muted); font-size:16px; }
+  .formato .ex { margin-top:16px; font-size:14px; color:#c9c9d8; font-style:italic; }
+
+  .capas { margin-top:48px; display:grid; grid-template-columns:repeat(6,1fr); gap:14px; }
+  .capas a { display:block; border-radius:16px; overflow:hidden; border:1px solid var(--line); transition:transform .2s, border-color .2s; aspect-ratio:3/4; }
+  .capas a:hover { transform:translateY(-4px); border-color:rgba(6,201,223,.5); }
+  .capas img { width:100%; height:100%; object-fit:cover; display:block; }
+  .mais { margin-top:28px; }
+
+  .principios { margin-top:48px; display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--line); border-radius:20px; overflow:hidden; }
+  .principio { padding:34px 30px; background:rgba(14,14,24,.55); }
+  .principio + .principio { border-left:1px solid var(--line); }
+  .principio .num { font-size:15px; font-weight:700; color:var(--muted); }
+  .principio h3 { font-size:24px; font-weight:800; letter-spacing:-.02em; margin:10px 0 8px; }
+  .principio p { color:var(--muted); font-size:16px; }
+
+  .chamada { position:relative; border-radius:28px; padding:72px 56px; overflow:hidden; border:1px solid var(--line);
+    background:radial-gradient(600px 300px at 0% 0%, rgba(132,15,234,.28), transparent 70%), radial-gradient(600px 320px at 100% 100%, rgba(6,201,223,.20), transparent 70%), var(--surface); }
+  .chamada h2 { max-width:640px; }
+  .chamada .form { background:rgba(5,5,10,.6); }
+  .chamada img { position:absolute; right:56px; top:50%; width:230px; transform:translateY(-50%); mix-blend-mode:lighten; opacity:.95; }
+  .lista { margin-top:26px; list-style:none; display:flex; gap:22px; flex-wrap:wrap; color:#c9c9d8; font-size:15px; }
+  .lista li::before { content:"▲ "; color:var(--up); font-size:11px; }
+
+  footer { border-top:1px solid var(--line); padding:40px 0 56px; color:var(--muted); font-size:14px; }
+  footer .wrap { display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; }
+  footer .disc { font-style:italic; }
+
+  @media (max-width:980px) {
+    .abertura { grid-template-columns:1fr; padding-top:56px; gap:24px; }
+    .cena { height:440px; }
+    .formatos, .principios { grid-template-columns:1fr; }
+    .principio + .principio { border-left:0; border-top:1px solid var(--line); }
+    .capas { grid-template-columns:repeat(3,1fr); }
+    .chamada { padding:48px 24px; } .chamada img { display:none; }
+    nav a:not(.botao) { display:none; }
+  }
+  @media (max-width:520px) {
+    .cena { height:400px; } .cena .cubo { width:230px; }
+    .cartao { min-width:140px; padding:10px 14px; } .cartao .num { font-size:18px; }
+    .c2 { top:20px; } .c1 { top:110px; }
+    .form { flex-direction:column; } .form input { padding:12px; } .form .botao { width:100%; }
+    section { padding:72px 0; }
+  }
+  @media (prefers-reduced-motion:reduce) { * { animation:none !important; } html { scroll-behavior:auto; } }
+</style>
+</head>
+<body>
+<div class="luz v"></div><div class="luz c"></div><div class="grade"></div>
+
+<header>
+  <div class="wrap">
+    <a class="marca" href="#"><img src="assets/cubo.png" alt="">CoinCubo</a>
+    <nav>
+      <a href="#formatos">O que fazemos</a>
+      <a href="#analises">Análises</a>
+      <a href="#metodo">Método</a>
+      <a class="botao" href="#newsletter">Assinar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap abertura">
+    <div>
+      <span class="selo"><i></i>Research cripto em português</span>
+      <h1>Sua casa de <span class="gradiente">análise</span> no mundo cripto.</h1>
+      <p class="lead">Conhecimento e ciência para entender o mercado de criptoativos. <b>Mecanismos, números e fontes</b> — sem hype e sem promessa de preço.</p>
+      <form class="form" data-newsletter>
+        <input type="email" name="email" placeholder="Seu melhor e-mail" autocomplete="email" required aria-label="Seu e-mail">
+        <button class="botao" type="submit">Assinar a newsletter</button>
+      </form>
+      <p class="aviso" role="status"></p>
+      <div class="acoes">
+        <a class="botao fantasma" href="https://www.instagram.com/coincubo/" target="_blank" rel="noopener">Seguir @coincubo no Instagram ↗</a>
+      </div>
+    </div>
+
+    <div class="cena" aria-label="Preços ao vivo">
+      <img class="cubo" src="assets/cubo.png" alt="Logo da CoinCubo, um cubo em gradiente rosa, violeta, azul e ciano">
+      <div class="cartao c1" data-moeda="bitcoin"><small>Bitcoin · BTC</small><div class="num">—</div><div class="var">&nbsp;</div></div>
+      <div class="cartao c2" data-moeda="ethereum"><small>Ethereum · ETH</small><div class="num">—</div><div class="var">&nbsp;</div></div>
+      <div class="cartao c3" data-moeda="solana"><small>Solana · SOL</small><div class="num">—</div><div class="var">&nbsp;</div></div>
+      <div class="cartao c4" data-moeda="ripple"><small>XRP</small><div class="num">—</div><div class="var">&nbsp;</div></div>
+      <p class="fonte" id="fonte">Carregando preços…</p>
+    </div>
+  </div>
+
+  <section id="formatos">
+    <div class="wrap">
+      <span class="olho">O que fazemos</span>
+      <h2>Explicamos o <span class="destaque">mecanismo</span>, não o hype.</h2>
+      <p class="intro">Toda semana, no Instagram e na newsletter: o que move o mercado, contado por quem lê os dados antes de opinar.</p>
+      <div class="formatos">
+        <article class="formato">
+          <div class="ic">?</div>
+          <h3>Explicativos</h3>
+          <p>O que é cada protocolo, para que serve e o que o diferencia — do zero, sem jargão solto.</p>
+          <p class="ex">“O que é a Zcash?” · “O que são stablecoins?”</p>
+        </article>
+        <article class="formato">
+          <div class="ic">%</div>
+          <h3>Notícia com dados</h3>
+          <p>As notícias da semana com o número que importa ao lado: preço, fluxo, volume e por que isso muda algo.</p>
+          <p class="ex">“ETF 3x: não é o que parece”</p>
+        </article>
+        <article class="formato">
+          <div class="ic">▤</div>
+          <h3>Pesquisa em carrossel</h3>
+          <p>Uma ideia por página, com fonte em cada número. Para salvar, reler e mandar para quem precisa entender.</p>
+          <p class="ex">“R$ 283 bi. Só 5% Bitcoin”</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="analises">
+    <div class="wrap">
+      <span class="olho">Últimas análises</span>
+      <h2>O que saiu esta <span class="destaque">semana</span>.</h2>
+      <div class="capas">
+        <a href="https://www.instagram.com/coincubo/" target="_blank" rel="noopener"><img src="assets/blackrock.jpg" alt="63%: aporte ou preço? Fundos cripto da BlackRock" loading="lazy"></a>
+        <a href="https://www.instagram.com/coincubo/" target="_blank" rel="noopener"><img src="assets/brasil.jpg" alt="R$ 283 bi. Só 5% Bitcoin" loading="lazy"></a>
+        <a href="https://www.instagram.com/coincubo/" target="_blank" rel="noopener"><img src="assets/xrp.jpg" alt="O que é o XRP?" loading="lazy"></a>
+        <a href="https://www.instagram.com/coincubo/" target="_blank" rel="noopener"><img src="assets/etf3x.jpg" alt="ETF 3x: não é o que parece" loading="lazy"></a>
+        <a href="https://www.instagram.com/coincubo/" target="_blank" rel="noopener"><img src="assets/stablecoins.jpg" alt="O que são stablecoins?" loading="lazy"></a>
+        <a href="https://www.instagram.com/coincubo/" target="_blank" rel="noopener"><img src="assets/zcash.jpg" alt="O que é a Zcash?" loading="lazy"></a>
+      </div>
+      <a class="botao fantasma mais" href="https://www.instagram.com/coincubo/" target="_blank" rel="noopener">Ver todas no Instagram ↗</a>
+    </div>
+  </section>
+
+  <section id="metodo">
+    <div class="wrap">
+      <span class="olho">Método</span>
+      <h2>Três regras que a casa <span class="destaque">não quebra</span>.</h2>
+      <div class="principios">
+        <div class="principio"><span class="num">01</span><h3>Analista, não influenciador</h3><p>Explicamos mecanismos e números. Nunca “vai explodir”, “compre já” ou alvo de preço.</p></div>
+        <div class="principio"><span class="num">02</span><h3>Todo número tem fonte</h3><p>CoinGecko, CoinMarketCap, SEC, Banco Central. Se um dado não tem fonte, ele não entra.</p></div>
+        <div class="principio"><span class="num">03</span><h3>Educação, não recomendação</h3><p>Damos o mapa para você decidir sozinho. Conteúdo educativo, sempre.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="newsletter">
+    <div class="wrap">
+      <div class="chamada">
+        <span class="olho">Newsletter CoinCubo</span>
+        <h2>A semana cripto, <span class="destaque">explicada</span> no seu e-mail.</h2>
+        <p class="intro">Um e-mail por semana com as análises, os números que mudaram e o que eles significam. Grátis. Sai quando quiser.</p>
+        <form class="form" data-newsletter>
+          <input type="email" name="email" placeholder="Seu melhor e-mail" autocomplete="email" required aria-label="Seu e-mail">
+          <button class="botao" type="submit">Quero receber</button>
+        </form>
+        <p class="aviso" role="status"></p>
+        <ul class="lista"><li>Grátis</li><li>1 e-mail por semana</li><li>Sem spam</li></ul>
+        <img src="assets/cubo.png" alt="">
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© CoinCubo · <a href="https://www.instagram.com/coincubo/" target="_blank" rel="noopener">@coincubo</a> · Research cripto em português</span>
+    <span class="disc">Conteúdo educativo. Não é recomendação de investimento.</span>
+  </div>
+</footer>
+
+<iframe name="substack-alvo" title="" hidden></iframe>
+<script>
+  // Nome da publicação na Substack (o que vem antes de .substack.com). Vazio enquanto ela não existe.
+  const SUBSTACK = "";
+
+  // Newsletter: envia o e-mail direto para a Substack, num iframe escondido, para a pessoa não sair do site.
+  document.querySelectorAll("[data-newsletter]").forEach((form) => {
+    const aviso = form.nextElementSibling;
+    form.addEventListener("submit", (e) => {
+      const email = form.email.value.trim();
+      if (!SUBSTACK) {
+        e.preventDefault();
+        aviso.className = "aviso";
+        aviso.textContent = "A newsletter abre em breve. Enquanto isso, siga @coincubo no Instagram.";
+        return;
+      }
+      form.action = `https://${SUBSTACK}.substack.com/api/v1/free?nojs=true`;
+      form.method = "post";
+      form.target = "substack-alvo";
+      setTimeout(() => {
+        aviso.className = "aviso ok";
+        aviso.textContent = `Pronto! Confirme a inscrição no e-mail que enviamos para ${email}.`;
+        form.reset();
+      }, 300);
+    });
+  });
+
+  // Preços ao vivo, sem chave: Binance primeiro, CoinGecko de reserva. Todo número tem fonte e hora.
+  const usd = (v) => "US$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: v < 10 ? 4 : 2 });
+  const PARES = { bitcoin: "BTCUSDT", ethereum: "ETHUSDT", solana: "SOLUSDT", ripple: "XRPUSDT" };
+  async function daBinance() {
+    const q = encodeURIComponent(JSON.stringify(Object.values(PARES)));
+    const r = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbols=${q}`);
+    if (!r.ok) throw 0;
+    const lista = await r.json(), out = {};
+    for (const [id, par] of Object.entries(PARES)) {
+      const t = lista.find((x) => x.symbol === par);
+      if (t) out[id] = { preco: +t.lastPrice, var: +t.priceChangePercent };
+    }
+    return { fonte: "Binance", dados: out };
+  }
+  async function doCoinGecko() {
+    const r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,ripple&vs_currencies=usd&include_24hr_change=true");
+    if (!r.ok) throw 0;
+    const d = await r.json(), out = {};
+    for (const id in d) out[id] = { preco: d[id].usd, var: d[id].usd_24h_change };
+    return { fonte: "CoinGecko", dados: out };
+  }
+  async function precos() {
+    let res;
+    try { res = await daBinance(); } catch { try { res = await doCoinGecko(); } catch { return; } }
+    document.querySelectorAll("[data-moeda]").forEach((c) => {
+      const m = res.dados[c.dataset.moeda]; if (!m) return;
+      c.querySelector(".num").textContent = usd(m.preco);
+      const el = c.querySelector(".var");
+      el.textContent = `${m.var >= 0 ? "▲ +" : "▼ "}${m.var.toFixed(2).replace(".", ",")}% em 24h`;
+      el.className = "var " + (m.var >= 0 ? "sobe" : "cai");
+    });
+    const agora = new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+    document.getElementById("fonte").textContent = `Fonte: ${res.fonte}, ${agora}`;
+  }
+  precos(); setInterval(precos, 60000);
+</script>
+</body>
+</html>
