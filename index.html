@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<script>try { const t = localStorage.getItem("tema"); if (t) document.documentElement.dataset.tema = t; } catch (e) {}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CoinCubo — Sua casa de análise no mundo cripto</title>
 <meta name="description" content="Research cripto em português. Conhecimento e ciência para entender o mercado de criptoativos, com dados e fontes. Assine a newsletter da CoinCubo.">
@@ -19,6 +20,24 @@
     --pink:#EB499F; --violet:#840FEA; --blue:#3281EA; --cyan:#06C9DF; --up:#2FE39A; --down:#FF4D6A;
     --topo: linear-gradient(120deg, var(--pink), var(--violet));
     --lado: linear-gradient(120deg, var(--blue), var(--cyan));
+    --acento:var(--cyan); --sobre-ciano:#05050A; --vidro:rgba(14,14,24,.6); --vidro-forte:rgba(14,14,24,.82); --topo-bg:rgba(5,5,10,.72);
+    --linha-forte:#2c2c40; --suave:#c9c9d8; --placeholder:#6b6b82; --sombra:rgba(0,0,0,.45); --brilho-v:rgba(132,15,234,.20); --brilho-c:rgba(6,201,223,.13);
+    --mistura:lighten; color-scheme:dark;
+  }
+  /* Versão clara: segue o sistema da pessoa, ou o botão ☀︎/☾ do topo (data-tema no <html>). */
+  @media (prefers-color-scheme: light) { :root:not([data-tema="escuro"]) {
+    --ink:#F7F7FB; --surface:#FFFFFF; --line:#E3E3EE; --text:#0B0B16; --muted:#5E5E74;
+    --up:#0E9F6E; --down:#E11D48; --acento:#0891A6;
+    --vidro:rgba(255,255,255,.7); --vidro-forte:rgba(255,255,255,.88); --topo-bg:rgba(247,247,251,.78);
+    --linha-forte:#C9C9DA; --suave:#3E3E52; --placeholder:#9A9AB0; --sombra:rgba(40,30,90,.12); --brilho-v:rgba(132,15,234,.10); --brilho-c:rgba(6,201,223,.10);
+    --mistura:normal; color-scheme:light;
+  } }
+  :root[data-tema="claro"] {
+    --ink:#F7F7FB; --surface:#FFFFFF; --line:#E3E3EE; --text:#0B0B16; --muted:#5E5E74;
+    --up:#0E9F6E; --down:#E11D48; --acento:#0891A6;
+    --vidro:rgba(255,255,255,.7); --vidro-forte:rgba(255,255,255,.88); --topo-bg:rgba(247,247,251,.78);
+    --linha-forte:#C9C9DA; --suave:#3E3E52; --placeholder:#9A9AB0; --sombra:rgba(40,30,90,.12); --brilho-v:rgba(132,15,234,.10); --brilho-c:rgba(6,201,223,.10);
+    --mistura:normal; color-scheme:light;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
   html { scroll-behavior:smooth; }
@@ -26,36 +45,38 @@
   a { color:inherit; }
   .wrap { max-width:1180px; margin:0 auto; padding:0 24px; }
   h1, h2, h3, .num { font-family:"Inter Tight", "Inter", sans-serif; }
-  .destaque { color:var(--cyan); }
+  .destaque { color:var(--acento); }
   .gradiente { background:var(--topo); -webkit-background-clip:text; background-clip:text; color:transparent; }
 
   /* Brilhos de fundo: violeta no alto à esquerda, ciano embaixo à direita. Sutis. */
   .luz { position:fixed; width:900px; height:900px; border-radius:50%; filter:blur(40px); pointer-events:none; z-index:-1; }
-  .luz.v { background:radial-gradient(circle, rgba(132,15,234,.20), transparent 62%); top:-420px; left:-360px; }
-  .luz.c { background:radial-gradient(circle, rgba(6,201,223,.13), transparent 62%); bottom:-460px; right:-380px; }
+  .luz.v { background:radial-gradient(circle, var(--brilho-v), transparent 62%); top:-420px; left:-360px; }
+  .luz.c { background:radial-gradient(circle, var(--brilho-c), transparent 62%); bottom:-460px; right:-380px; }
   .grade { position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.35;
     background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
     background-size:64px 64px; mask-image:radial-gradient(ellipse at 50% 20%, #000 10%, transparent 70%); }
 
   /* Topo */
-  header { position:sticky; top:0; z-index:10; backdrop-filter:blur(14px); background:rgba(5,5,10,.72); border-bottom:1px solid rgba(28,28,42,.7); }
+  header { position:sticky; top:0; z-index:10; backdrop-filter:blur(14px); background:var(--topo-bg); border-bottom:1px solid var(--line); }
   header .wrap { display:flex; align-items:center; justify-content:space-between; height:68px; }
   .marca { display:flex; align-items:center; gap:10px; text-decoration:none; font-family:"Inter Tight"; font-weight:800; font-size:20px; letter-spacing:-.02em; }
-  .marca img { width:30px; height:30px; mix-blend-mode:lighten; }
+  .marca img { width:30px; height:30px; mix-blend-mode:var(--mistura); }
   nav { display:flex; align-items:center; gap:28px; font-size:15px; color:var(--muted); }
   nav a { text-decoration:none; transition:color .15s; }
   nav a:hover { color:var(--text); }
   .botao { display:inline-flex; align-items:center; justify-content:center; gap:8px; border:0; cursor:pointer; text-decoration:none;
-    font:600 15px/1 "Inter"; color:var(--ink); background:var(--cyan); padding:14px 22px; border-radius:12px; transition:transform .15s, box-shadow .15s; }
+    font:600 15px/1 "Inter"; color:var(--sobre-ciano); background:var(--cyan); padding:14px 22px; border-radius:12px; transition:transform .15s, box-shadow .15s; }
   .botao:hover { transform:translateY(-1px); box-shadow:0 10px 30px rgba(6,201,223,.28); }
   .botao.fantasma { background:transparent; color:var(--text); border:1px solid var(--line); }
-  .botao.fantasma:hover { box-shadow:none; border-color:#2c2c40; }
-  nav .botao { padding:10px 16px; color:var(--ink); }
+  .botao.fantasma:hover { box-shadow:none; border-color:var(--linha-forte); }
+  nav .botao { padding:10px 16px; color:var(--sobre-ciano); }
+  .tema { width:38px; height:38px; display:grid; place-items:center; border-radius:10px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; font-size:17px; transition:color .15s, border-color .15s; }
+  .tema:hover { color:var(--text); border-color:var(--linha-forte); }
 
   /* Abertura */
   .abertura { padding-top:96px; padding-bottom:72px; display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center; }
   .selo { display:inline-flex; align-items:center; gap:10px; font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
-    border:1px solid var(--line); background:rgba(14,14,24,.6); padding:8px 14px; border-radius:999px; }
+    border:1px solid var(--line); background:var(--vidro); padding:8px 14px; border-radius:999px; }
   .selo i { width:7px; height:7px; border-radius:50%; background:var(--up); box-shadow:0 0 10px var(--up); }
   h1 { font-size:clamp(46px, 6.4vw, 84px); font-weight:800; line-height:.98; letter-spacing:-.035em; margin:26px 0 22px; }
   .lead { font-size:20px; color:var(--muted); max-width:540px; }
@@ -63,7 +84,7 @@
 
   .form { margin-top:34px; display:flex; gap:10px; max-width:520px; background:var(--surface); border:1px solid var(--line); padding:8px; border-radius:16px; }
   .form input { flex:1; min-width:0; background:transparent; border:0; outline:0; color:var(--text); font:16px "Inter"; padding:0 12px; }
-  .form input::placeholder { color:#6b6b82; }
+  .form input::placeholder { color:var(--placeholder); }
   .form:focus-within { border-color:rgba(6,201,223,.55); box-shadow:0 0 0 4px rgba(6,201,223,.10); }
   .aviso { margin-top:12px; font-size:14px; color:var(--muted); min-height:22px; }
   .aviso.ok { color:var(--up); } .aviso.erro { color:var(--down); }
@@ -71,11 +92,11 @@
 
   /* O cubo, flutuando, com os preços ao vivo em volta. */
   .cena { position:relative; height:520px; }
-  .cena .cubo { position:absolute; left:50%; top:50%; width:340px; transform:translate(-50%,-50%); mix-blend-mode:lighten;
+  .cena .cubo { position:absolute; left:50%; top:50%; width:340px; transform:translate(-50%,-50%); mix-blend-mode:var(--mistura);
     filter:drop-shadow(0 30px 80px rgba(132,15,234,.45)); animation:flutua 7s ease-in-out infinite; }
   @keyframes flutua { 50% { transform:translate(-50%,-54%) rotate(-2deg); } }
-  .cartao { position:absolute; background:rgba(14,14,24,.82); backdrop-filter:blur(10px); border:1px solid var(--line); border-radius:16px; padding:14px 18px; min-width:168px;
-    box-shadow:0 20px 50px rgba(0,0,0,.45); animation:flutua2 8s ease-in-out infinite; }
+  .cartao { position:absolute; background:var(--vidro-forte); backdrop-filter:blur(10px); border:1px solid var(--line); border-radius:16px; padding:14px 18px; min-width:168px;
+    box-shadow:0 20px 50px var(--sombra); animation:flutua2 8s ease-in-out infinite; }
   .cartao:nth-of-type(2) { animation-delay:-2s; } .cartao:nth-of-type(3) { animation-delay:-4s; } .cartao:nth-of-type(4) { animation-delay:-6s; }
   @keyframes flutua2 { 50% { transform:translateY(-10px); } }
   .cartao small { display:block; font-size:12px; color:var(--muted); font-weight:500; }
@@ -87,7 +108,7 @@
 
   /* Seções */
   section { padding:96px 0; }
-  .olho { font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--cyan); }
+  .olho { font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--acento); }
   h2 { font-size:clamp(34px, 4.2vw, 54px); font-weight:800; line-height:1.02; letter-spacing:-.03em; margin:14px 0 16px; max-width:760px; }
   .intro { color:var(--muted); font-size:18px; max-width:620px; }
 
@@ -95,11 +116,11 @@
   .formato { background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:30px; position:relative; overflow:hidden; }
   .formato::before { content:""; position:absolute; inset:0 0 auto 0; height:2px; background:var(--lado); opacity:.9; }
   .formato:nth-child(2)::before { background:var(--topo); }
-  .formato .ic { width:46px; height:46px; border-radius:12px; display:grid; place-items:center; background:rgba(6,201,223,.10); color:var(--cyan); font-size:22px; margin-bottom:20px; }
+  .formato .ic { width:46px; height:46px; border-radius:12px; display:grid; place-items:center; background:rgba(6,201,223,.10); color:var(--acento); font-size:22px; margin-bottom:20px; }
   .formato:nth-child(2) .ic { background:rgba(235,73,159,.12); color:var(--pink); }
   .formato h3 { font-size:22px; font-weight:700; letter-spacing:-.02em; margin-bottom:8px; }
   .formato p { color:var(--muted); font-size:16px; }
-  .formato .ex { margin-top:16px; font-size:14px; color:#c9c9d8; font-style:italic; }
+  .formato .ex { margin-top:16px; font-size:14px; color:var(--suave); font-style:italic; }
 
   .capas { margin-top:48px; display:grid; grid-template-columns:repeat(6,1fr); gap:14px; }
   .capas a { display:block; border-radius:16px; overflow:hidden; border:1px solid var(--line); transition:transform .2s, border-color .2s; aspect-ratio:3/4; }
@@ -108,7 +129,7 @@
   .mais { margin-top:28px; }
 
   .principios { margin-top:48px; display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--line); border-radius:20px; overflow:hidden; }
-  .principio { padding:34px 30px; background:rgba(14,14,24,.55); }
+  .principio { padding:34px 30px; background:var(--vidro); }
   .principio + .principio { border-left:1px solid var(--line); }
   .principio .num { font-size:15px; font-weight:700; color:var(--muted); }
   .principio h3 { font-size:24px; font-weight:800; letter-spacing:-.02em; margin:10px 0 8px; }
@@ -117,9 +138,9 @@
   .chamada { position:relative; border-radius:28px; padding:72px 56px; overflow:hidden; border:1px solid var(--line);
     background:radial-gradient(600px 300px at 0% 0%, rgba(132,15,234,.28), transparent 70%), radial-gradient(600px 320px at 100% 100%, rgba(6,201,223,.20), transparent 70%), var(--surface); }
   .chamada h2 { max-width:640px; }
-  .chamada .form { background:rgba(5,5,10,.6); }
-  .chamada img { position:absolute; right:56px; top:50%; width:230px; transform:translateY(-50%); mix-blend-mode:lighten; opacity:.95; }
-  .lista { margin-top:26px; list-style:none; display:flex; gap:22px; flex-wrap:wrap; color:#c9c9d8; font-size:15px; }
+  .chamada .form { background:var(--surface); }
+  .chamada img { position:absolute; right:56px; top:50%; width:230px; transform:translateY(-50%); mix-blend-mode:var(--mistura); opacity:.95; }
+  .lista { margin-top:26px; list-style:none; display:flex; gap:22px; flex-wrap:wrap; color:var(--suave); font-size:15px; }
   .lista li::before { content:"▲ "; color:var(--up); font-size:11px; }
 
   footer { border-top:1px solid var(--line); padding:40px 0 56px; color:var(--muted); font-size:14px; }
@@ -155,6 +176,7 @@
       <a href="#formatos">O que fazemos</a>
       <a href="#analises">Análises</a>
       <a href="#metodo">Método</a>
+      <button class="tema" type="button" data-tema-botao aria-label="Trocar para o modo claro">☀︎</button>
       <a class="botao" href="#newsletter">Assinar</a>
     </nav>
   </div>
@@ -269,6 +291,21 @@
 
 <iframe name="substack-alvo" title="" hidden></iframe>
 <script>
+  // Botão de tema: alterna entre claro e escuro e lembra a escolha neste navegador.
+  (() => {
+    const botao = document.querySelector("[data-tema-botao]");
+    const atual = () => document.documentElement.dataset.tema || (matchMedia("(prefers-color-scheme: light)").matches ? "claro" : "escuro");
+    const pinta = () => { const claro = atual() === "claro"; botao.textContent = claro ? "☾" : "☀︎"; botao.setAttribute("aria-label", claro ? "Trocar para o modo escuro" : "Trocar para o modo claro"); };
+    botao.addEventListener("click", () => {
+      const novo = atual() === "claro" ? "escuro" : "claro";
+      document.documentElement.dataset.tema = novo;
+      try { localStorage.setItem("tema", novo); } catch (e) {}
+      pinta();
+    });
+    matchMedia("(prefers-color-scheme: light)").addEventListener("change", pinta);
+    pinta();
+  })();
+
   // Nome da publicação na Substack (o que vem antes de .substack.com). Vazio enquanto ela não existe.
   const SUBSTACK = "";
 
