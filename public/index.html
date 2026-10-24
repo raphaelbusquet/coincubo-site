@@ -82,8 +82,6 @@
   .lead { font-size:20px; color:var(--muted); max-width:540px; }
   .lead b { color:var(--text); font-weight:600; }
 
-  /* Formulário oficial da Substack: é o único caminho que ela aceita vindo de outro site. */
-  .substack { display:block; margin-top:30px; width:100%; max-width:520px; height:320px; border:1px solid var(--line); border-radius:18px; background:#fff; }
   .form { margin-top:34px; display:flex; gap:10px; max-width:520px; background:var(--surface); border:1px solid var(--line); padding:8px; border-radius:16px; }
   .form input { flex:1; min-width:0; background:transparent; border:0; outline:0; color:var(--text); font:16px "Inter"; padding:0 12px; }
   .form input::placeholder { color:var(--placeholder); }
@@ -190,7 +188,11 @@
       <span class="selo"><i></i>Research cripto em português</span>
       <h1>Sua casa de <span class="gradiente">análise</span> no mundo cripto.</h1>
       <p class="lead">Conhecimento e ciência para entender o mercado de criptoativos. <b>Mecanismos, números e fontes</b> — sem hype e sem promessa de preço.</p>
-      <iframe class="substack" src="https://coincubo.substack.com/embed" title="Assinar a newsletter da CoinCubo" frameborder="0" scrolling="no" loading="lazy"></iframe>
+      <form class="form" data-newsletter>
+        <input type="email" name="email" placeholder="Seu melhor e-mail" autocomplete="email" required aria-label="Seu e-mail">
+        <button class="botao" type="submit">Assinar a newsletter</button>
+      </form>
+      <p class="aviso" role="status"></p>
       <div class="acoes">
         <a class="botao fantasma" href="https://www.instagram.com/coincubo/" target="_blank" rel="noopener">Seguir @coincubo no Instagram ↗</a>
       </div>
@@ -268,7 +270,11 @@
         <span class="olho">Newsletter CoinCubo</span>
         <h2>A semana cripto, <span class="destaque">explicada</span> no seu e-mail.</h2>
         <p class="intro">Um e-mail por semana com as análises, os números que mudaram e o que eles significam. Grátis. Sai quando quiser.</p>
-        <iframe class="substack" src="https://coincubo.substack.com/embed" title="Assinar a newsletter da CoinCubo" frameborder="0" scrolling="no" loading="lazy"></iframe>
+        <form class="form" data-newsletter>
+          <input type="email" name="email" placeholder="Seu melhor e-mail" autocomplete="email" required aria-label="Seu e-mail">
+          <button class="botao" type="submit">Quero receber</button>
+        </form>
+        <p class="aviso" role="status"></p>
         <ul class="lista"><li>Grátis</li><li>1 e-mail por semana</li><li>Sem spam</li></ul>
         <img src="assets/cubo.png" alt="">
       </div>
@@ -283,6 +289,7 @@
   </div>
 </footer>
 
+<iframe name="substack-alvo" title="" hidden></iframe>
 <script>
   // Botão de tema: alterna entre claro e escuro e lembra a escolha neste navegador.
   (() => {
@@ -299,6 +306,30 @@
     pinta();
   })();
 
+  // Nome da publicação na Substack (o que vem antes de .substack.com). Vazio enquanto ela não existe.
+  const SUBSTACK = "coincubo";
+
+  // Newsletter: envia o e-mail direto para a Substack, num iframe escondido, para a pessoa não sair do site.
+  document.querySelectorAll("[data-newsletter]").forEach((form) => {
+    const aviso = form.nextElementSibling;
+    form.addEventListener("submit", (e) => {
+      const email = form.email.value.trim();
+      if (!SUBSTACK) {
+        e.preventDefault();
+        aviso.className = "aviso";
+        aviso.textContent = "A newsletter abre em breve. Enquanto isso, siga @coincubo no Instagram.";
+        return;
+      }
+      form.action = `https://${SUBSTACK}.substack.com/api/v1/free?nojs=true`;
+      form.method = "post";
+      form.target = "substack-alvo";
+      setTimeout(() => {
+        aviso.className = "aviso ok";
+        aviso.textContent = `Pronto! Confirme a inscrição no e-mail que enviamos para ${email}.`;
+        form.reset();
+      }, 300);
+    });
+  });
 
   // Preços ao vivo, sem chave: Binance primeiro, CoinGecko de reserva. Todo número tem fonte e hora.
   const usd = (v) => "US$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: v < 10 ? 4 : 2 });
