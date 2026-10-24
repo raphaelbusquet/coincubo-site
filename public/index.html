@@ -86,6 +86,7 @@
   .form input { flex:1; min-width:0; background:transparent; border:0; outline:0; color:var(--text); font:16px "Inter"; padding:0 12px; }
   .form input::placeholder { color:var(--placeholder); }
   .form:focus-within { border-color:rgba(6,201,223,.55); box-shadow:0 0 0 4px rgba(6,201,223,.10); }
+  .form button:disabled { opacity:.6; cursor:wait; }
   .aviso { margin-top:12px; font-size:14px; color:var(--muted); min-height:22px; }
   .aviso.ok { color:var(--up); } .aviso.erro { color:var(--down); }
   .acoes { margin-top:18px; display:flex; gap:12px; flex-wrap:wrap; }
@@ -189,6 +190,7 @@
       <h1>Sua casa de <span class="gradiente">análise</span> no mundo cripto.</h1>
       <p class="lead">Conhecimento e ciência para entender o mercado de criptoativos. <b>Mecanismos, números e fontes</b> — sem hype e sem promessa de preço.</p>
       <form class="form" data-newsletter>
+          <input type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px">
         <input type="email" name="email" placeholder="Seu melhor e-mail" autocomplete="email" required aria-label="Seu e-mail">
         <button class="botao" type="submit">Assinar a newsletter</button>
       </form>
@@ -271,6 +273,7 @@
         <h2>A semana cripto, <span class="destaque">explicada</span> no seu e-mail.</h2>
         <p class="intro">Um e-mail por semana com as análises, os números que mudaram e o que eles significam. Grátis. Sai quando quiser.</p>
         <form class="form" data-newsletter>
+          <input type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px">
           <input type="email" name="email" placeholder="Seu melhor e-mail" autocomplete="email" required aria-label="Seu e-mail">
           <button class="botao" type="submit">Quero receber</button>
         </form>
@@ -289,7 +292,6 @@
   </div>
 </footer>
 
-<iframe name="substack-alvo" title="" hidden></iframe>
 <script>
   // Botão de tema: alterna entre claro e escuro e lembra a escolha neste navegador.
   (() => {
@@ -306,28 +308,35 @@
     pinta();
   })();
 
-  // Nome da publicação na Substack (o que vem antes de .substack.com). Vazio enquanto ela não existe.
-  const SUBSTACK = "coincubo";
-
-  // Newsletter: envia o e-mail direto para a Substack, num iframe escondido, para a pessoa não sair do site.
+  // Newsletter: o e-mail vai para o Worker coincubo-newsletter, que avisa o Raphael no Telegram.
+  // Ele importa na Substack à mão (a Substack recusa inscrição enviada de outro site e não tem API).
+  const NEWSLETTER = "https://coincubo-newsletter.raphaelbusquet.workers.dev/inscrever";
   document.querySelectorAll("[data-newsletter]").forEach((form) => {
     const aviso = form.nextElementSibling;
-    form.addEventListener("submit", (e) => {
+    const botao = form.querySelector("button");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
       const email = form.email.value.trim();
-      if (!SUBSTACK) {
-        e.preventDefault();
-        aviso.className = "aviso";
-        aviso.textContent = "A newsletter abre em breve. Enquanto isso, siga @coincubo no Instagram.";
-        return;
-      }
-      form.action = `https://${SUBSTACK}.substack.com/api/v1/free?nojs=true`;
-      form.method = "post";
-      form.target = "substack-alvo";
-      setTimeout(() => {
+      botao.disabled = true;
+      aviso.className = "aviso";
+      aviso.textContent = "Enviando…";
+      try {
+        const r = await fetch(NEWSLETTER, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ email, site: form.site.value }),
+        });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok || !d.ok) throw new Error(d.erro || "Não deu certo agora. Tente de novo em instantes.");
         aviso.className = "aviso ok";
-        aviso.textContent = `Pronto! Confirme a inscrição no e-mail que enviamos para ${email}.`;
+        aviso.textContent = `Pronto! ${email} está na lista. A próxima edição chega no seu e-mail.`;
         form.reset();
-      }, 300);
+      } catch (err) {
+        aviso.className = "aviso erro";
+        aviso.textContent = err.message === "Failed to fetch" ? "Sem conexão agora. Tente de novo em instantes." : err.message;
+      } finally {
+        botao.disabled = false;
+      }
     });
   });
 
