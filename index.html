@@ -5,6 +5,8 @@
 <script>if (location.protocol === "http:" && location.hostname.endsWith("coincubo.com")) location.replace("https://" + location.host + location.pathname + location.search + location.hash);</script>
 <script>try { const t = localStorage.getItem("tema"); if (t) document.documentElement.dataset.tema = t; } catch (e) {}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.binance.com https://api.coingecko.com https://coincubo-newsletter.raphaelbusquet.workers.dev; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>CoinCubo — Sua casa de análise no mundo cripto</title>
 <meta name="description" content="Research cripto em português. Conhecimento e ciência para entender o mercado de criptoativos, com dados e fontes. Assine a newsletter da CoinCubo.">
 <meta property="og:title" content="CoinCubo — Sua casa de análise no mundo cripto">
