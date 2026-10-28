@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://substackcdn.com https://substack-post-media.s3.amazonaws.com; connect-src https://coincubo-newsletter.raphaelbusquet.workers.dev; base-uri 'self'; form-action 'none'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Artigos — CoinCubo</title>
+<meta name="description" content="Os artigos semanais da CoinCubo: o que mexeu com o mercado cripto, com número e fonte.">
+<meta property="og:title" content="Artigos — CoinCubo">
+<meta property="og:image" content="https://coincubo.com/assets/cubo.png">
+<link rel="icon" href="../assets/cubo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#05050A; --surface:#0E0E18; --line:#1C1C2A; --text:#fff; --muted:#9A9AB0; --cyan:#06C9DF; --acento:#06C9DF;
+    --pink:#EB499F; --violet:#840FEA; --topo:linear-gradient(120deg,var(--pink),var(--violet)); --mistura:lighten; color-scheme:dark; }
+  @media (prefers-color-scheme: light) { :root { --ink:#F7F7FB; --surface:#fff; --line:#E3E3EE; --text:#0B0B16; --muted:#5E5E74; --acento:#0891A6; --mistura:normal; color-scheme:light; } }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--ink); color:var(--text); font:17px/1.6 "Inter", system-ui, sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+  .wrap { max-width:1120px; margin:0 auto; padding:0 24px; }
+  header .wrap { display:flex; align-items:center; justify-content:space-between; height:68px; border-bottom:1px solid var(--line); }
+  .marca { display:flex; align-items:center; gap:10px; text-decoration:none; font:800 20px "Inter Tight"; letter-spacing:-.02em; }
+  .marca img { width:30px; height:30px; mix-blend-mode:var(--mistura); }
+  header nav a { color:var(--muted); text-decoration:none; font-size:15px; margin-left:22px; }
+  header nav a:hover { color:var(--text); }
+  main { padding:64px 0 88px; }
+  .olho { font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--acento); }
+  h1 { font:800 clamp(38px,5vw,60px)/1.02 "Inter Tight"; letter-spacing:-.035em; margin:12px 0 14px; }
+  h1 span { background:var(--topo); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .intro { color:var(--muted); font-size:18px; max-width:620px; }
+  .lista { margin-top:40px; display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .artigo { display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--line); border-radius:20px; overflow:hidden; text-decoration:none; transition:transform .2s, border-color .2s; }
+  .artigo:hover { transform:translateY(-4px); border-color:rgba(6,201,223,.5); }
+  .artigo img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:var(--line); }
+  .artigo div { padding:20px 22px 24px; }
+  .artigo time { font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--acento); }
+  .artigo h2 { font:700 20px/1.2 "Inter Tight"; letter-spacing:-.02em; margin:8px 0; }
+  .artigo p { color:var(--muted); font-size:15px; }
+  .vazio { margin-top:40px; background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:40px 28px; text-align:center; color:var(--muted); }
+  .vazio b { display:block; color:var(--text); font:700 22px "Inter Tight"; margin-bottom:8px; }
+  .botao { display:inline-block; margin-top:20px; background:var(--cyan); color:#05050A; font-weight:600; padding:14px 22px; border-radius:12px; text-decoration:none; }
+  footer { border-top:1px solid var(--line); padding:32px 0 48px; color:var(--muted); font-size:14px; }
+  @media (max-width:980px) { .lista { grid-template-columns:1fr; } header nav a:not(:last-child) { display:none; } }
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="marca" href="/"><img src="../assets/cubo.png" alt="">CoinCubo</a>
+  <nav><a href="/#mercado">Mercado</a><a href="/">Início</a><a href="https://coincubo.substack.com" target="_blank" rel="noopener">Assinar</a></nav></div></header>
+<main><div class="wrap">
+  <span class="olho">Artigos</span>
+  <h1>A análise da semana, <span>por escrito</span>.</h1>
+  <p class="intro">Toda semana na newsletter da CoinCubo: o que mexeu com o mercado cripto, explicado pelo mecanismo, com número e fonte.</p>
+  <div class="lista" id="lista"></div>
+  <div class="vazio" id="vazio" hidden><b>O primeiro artigo sai em breve.</b>Assine a newsletter para receber no seu e-mail assim que for publicado.<br><a class="botao" href="https://coincubo.substack.com" target="_blank" rel="noopener">Assinar grátis</a></div>
+</div></main>
+<footer><div class="wrap">© CoinCubo · <a href="/">coincubo.com</a> · Conteúdo educativo, não é recomendação de investimento.</div></footer>
+<script>
+  (async () => {
+    let artigos = [];
+    try { artigos = (await (await fetch("https://coincubo-newsletter.raphaelbusquet.workers.dev/artigos")).json()).artigos || []; } catch {}
+    if (!artigos.length) { document.getElementById("vazio").hidden = false; return; }
+    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+    document.getElementById("lista").innerHTML = artigos.map((a) => `<a class="artigo" href="${esc(a.link)}" target="_blank" rel="noopener">`
+      + (a.capa ? `<img src="${esc(a.capa)}" alt="" loading="lazy">` : "")
+      + `<div><time>${new Date(a.data).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}</time><h2>${esc(a.titulo)}</h2><p>${esc(a.resumo)}</p></div></a>`).join("");
+  })();
+</script>
+</body>
+</html>
