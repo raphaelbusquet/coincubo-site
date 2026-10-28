@@ -5,7 +5,7 @@
 <script>if (location.protocol === "http:" && location.hostname.endsWith("coincubo.com")) location.replace("https://" + location.host + location.pathname + location.search + location.hash);</script>
 <script>try { const t = localStorage.getItem("tema"); if (t) document.documentElement.dataset.tema = t; } catch (e) {}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://coin-images.coingecko.com; connect-src 'self' https://api.binance.com https://api.coingecko.com https://coincubo-newsletter.raphaelbusquet.workers.dev; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://coin-images.coingecko.com https://static.coinpaprika.com; connect-src 'self' https://api.binance.com https://api.coingecko.com https://api.coinpaprika.com https://coincubo-newsletter.raphaelbusquet.workers.dev; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>CoinCubo — Sua casa de análise no mundo cripto</title>
 <meta name="description" content="Research cripto em português. Conhecimento e ciência para entender o mercado de criptoativos, com dados e fontes. Assine a newsletter da CoinCubo.">
@@ -171,10 +171,11 @@
   .tabela td:first-child { color:var(--muted); width:44px; }
   .ativo { display:flex; align-items:center; gap:12px; }
   .ativo img { width:28px; height:28px; border-radius:50%; flex:none; background:var(--line); }
-  .ativo b { font-weight:600; }
+  .ativo b { font-weight:600; display:inline-block; max-width:220px; overflow:hidden; text-overflow:ellipsis; vertical-align:bottom; }
   .ativo span { color:var(--muted); font-size:13px; margin-left:6px; text-transform:uppercase; }
   .tabela .var { font-weight:600; }
   .tabela td.preco small { display:none; }
+  .tabela.sem-spark th:last-child, .tabela.sem-spark td:last-child { display:none; }
   .spark { width:120px; height:36px; display:block; margin-left:auto; }
   .tabela .vazio { text-align:center; color:var(--muted); padding:40px; }
   .rodape-tab { margin-top:14px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; font-size:12px; font-style:italic; color:var(--muted); }
@@ -191,6 +192,14 @@
     .tabela .so-medio { display:none; }
     .ativo { gap:10px; } .ativo img { width:24px; height:24px; }
     .ativo span { display:block; margin:0; font-size:12px; }
+    .ativo b { display:block; max-width:100%; }
+    .ativo, .ativo div { min-width:0; } .ativo div { overflow:hidden; }
+    .tabela table { table-layout:fixed; }
+    .tabela th:nth-child(2) { width:44%; } .tabela th:nth-child(3) { width:34%; } .tabela th:last-child { width:22%; }
+    .tabela td { overflow:hidden; text-overflow:ellipsis; }
+    .spark { width:100%; }
+    .tabela td.preco { font-size:14px; }
+    .tabela.sem-spark th:nth-child(2) { width:52%; } .tabela.sem-spark th:nth-child(3) { width:48%; }
     .spark { width:58px; height:28px; }
     .tabela th:last-child, .tabela td:last-child { padding-right:14px; }
     .tabela th, .tabela td { padding:12px 8px; } .tabela th:nth-child(2), .tabela td:nth-child(2) { padding-left:14px; }
@@ -483,7 +492,7 @@
   const cls = (v) => "var " + (v >= 0 ? "sobe" : "cai");
   function spark(p) {
     if (!p || p.length < 2) return "";
-    const pts = p.filter((_, i) => i % 4 === 0), min = Math.min(...pts), max = Math.max(...pts), w = 120, h = 36;
+    const pts = p.length > 60 ? p.filter((_, i) => i % 4 === 0) : p, min = Math.min(...pts), max = Math.max(...pts), w = 120, h = 36;
     const d = pts.map((v, i) => `${(i / (pts.length - 1) * w).toFixed(1)},${(h - 3 - (v - min) / (max - min || 1) * (h - 6)).toFixed(1)}`).join(" ");
     const cor = p[p.length - 1] >= p[0] ? "var(--up)" : "var(--down)";
     return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${d}" fill="none" stroke="${cor}" stroke-width="1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`;
@@ -493,37 +502,73 @@
     const lista = [...M.dados];
     if (M.ordem === "alta") lista.sort((a, b) => (b.price_change_percentage_24h ?? -1e9) - (a.price_change_percentage_24h ?? -1e9));
     if (M.ordem === "queda") lista.sort((a, b) => (a.price_change_percentage_24h ?? 1e9) - (b.price_change_percentage_24h ?? 1e9));
+    document.querySelector(".tabela").classList.toggle("sem-spark", !lista.some((c) => c.sparkline_in_7d?.price?.length));
     document.getElementById("ranking").innerHTML = lista.slice(0, M.limite).map((c) => {
       const d1 = c.price_change_percentage_24h_in_currency ?? c.price_change_percentage_24h, d7 = c.price_change_percentage_7d_in_currency;
-      const img = /^https:\/\/coin-images\.coingecko\.com\//.test(c.image) ? `<img src="${esc(c.image)}" alt="" loading="lazy" width="28" height="28">` : "<img alt=\"\">";
+      const img = /^https:\/\/(coin-images\.coingecko\.com|static\.coinpaprika\.com)\//.test(c.image) ? `<img src="${esc(c.image)}" alt="" loading="lazy" width="28" height="28">` : "<img alt=\"\">";
       return `<tr><td>${c.market_cap_rank ?? ""}</td><td><div class="ativo">${img}<div><b>${esc(c.name)}</b><span>${esc(c.symbol)}</span></div></div></td>`
         + `<td class="preco">${fmt(c.current_price, M.ref)}<small class="${cls(d1)}">${pct(d1)}</small></td><td class="${cls(d1)} so-desk">${pct(d1)}</td><td class="${cls(d7)} so-medio">${pct(d7)}</td>`
         + `<td class="so-largo">${fmt(c.market_cap, M.ref, true)}</td><td class="so-largo">${fmt(c.total_volume, M.ref, true)}</td><td>${spark(c.sparkline_in_7d?.price)}</td></tr>`;
     }).join("");
   }
-  async function mercado() {
-    try {
-      const [r, g] = await Promise.all([
-        fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${M.ref}&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=24h,7d`),
-        fetch("https://api.coingecko.com/api/v3/global"),
-      ]);
-      if (!r.ok) throw 0;
-      M.dados = await r.json();
-      desenhar();
-      if (g.ok) {
-        const d = (await g.json()).data;
-        document.getElementById("m-cap").textContent = fmt(d.total_market_cap[M.ref], M.ref, true);
-        const v = d.market_cap_change_percentage_24h_usd, el = document.getElementById("m-cap-var");
-        el.textContent = pct(v) + " em 24h"; el.className = cls(v);
-        document.getElementById("m-vol").textContent = fmt(d.total_volume[M.ref], M.ref, true);
-        document.getElementById("m-btc").textContent = d.market_cap_percentage.btc.toFixed(1).replace(".", ",") + "%";
-        document.getElementById("m-eth").textContent = d.market_cap_percentage.eth.toFixed(1).replace(".", ",") + "%";
-      }
-      const agora = new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
-      document.getElementById("m-fonte").textContent = `Fonte: CoinGecko, ${agora}. Informativo, não é recomendação de investimento.`;
-    } catch {
-      if (!M.dados.length) document.getElementById("ranking").innerHTML = '<tr><td class="vazio" colspan="8">Não foi possível carregar agora. Tente de novo em instantes.</td></tr>';
+  // Três fontes em sequência: cache do nosso Worker, CoinGecko direto e CoinPaprika direto.
+  // A API grátis do CoinGecko limita por IP (VPN e rede compartilhada estouram rápido), daí as reservas.
+  const GECKO = "https://api.coingecko.com/api/v3";
+  async function viaWorker() {
+    const r = await fetch(`https://coincubo-newsletter.raphaelbusquet.workers.dev/mercado?ref=${M.ref}`);
+    if (!r.ok) throw 0;
+    return r.json();
+  }
+  async function viaGecko() {
+    const [r, g] = await Promise.all([
+      fetch(`${GECKO}/coins/markets?vs_currency=${M.ref}&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=24h,7d`),
+      fetch(`${GECKO}/global`).catch(() => null),
+    ]);
+    if (!r.ok) throw 0;
+    return { fonte: "CoinGecko", moedas: await r.json(), global: g && g.ok ? (await g.json()).data : null };
+  }
+  async function viaPaprika() {
+    const api = "https://api.coinpaprika.com/v1";
+    const [t, g] = await Promise.all([fetch(`${api}/tickers?quotes=USD,BRL&limit=100`), fetch(`${api}/global`).catch(() => null)]);
+    if (!t.ok) throw 0;
+    const lista = (await t.json()).sort((a, b) => a.rank - b.rank).slice(0, 100), Q = M.ref.toUpperCase();
+    const moedas = lista.map((c) => ({ name: c.name, symbol: c.symbol, market_cap_rank: c.rank,
+      image: `https://static.coinpaprika.com/coin/${c.id}/logo.png`, current_price: c.quotes[Q].price, market_cap: c.quotes[Q].market_cap,
+      total_volume: c.quotes[Q].volume_24h, price_change_percentage_24h: c.quotes[Q].percent_change_24h,
+      price_change_percentage_7d_in_currency: c.quotes[Q].percent_change_7d }));
+    let global = null;
+    if (g && g.ok) {
+      const d = await g.json(), cambio = lista[0].quotes.BRL.price / lista[0].quotes.USD.price, eth = lista.find((c) => c.id === "eth-ethereum");
+      const em = (v) => ({ usd: v, brl: v * cambio });
+      global = { total_market_cap: em(d.market_cap_usd), total_volume: em(d.volume_24h_usd), market_cap_change_percentage_24h_usd: d.market_cap_change_24h,
+        market_cap_percentage: { btc: d.bitcoin_dominance_percentage, eth: eth ? eth.quotes.USD.market_cap / d.market_cap_usd * 100 : 0 } };
     }
+    return { fonte: "CoinPaprika", moedas, global };
+  }
+  async function mercado() {
+    let res = null;
+    for (const fonte of [viaWorker, viaGecko, viaPaprika]) {
+      try { res = await fonte(); if (res.moedas?.length) break; } catch {}
+      res = null;
+    }
+    if (!res) {
+      if (!M.dados.length) document.getElementById("ranking").innerHTML = '<tr><td class="vazio" colspan="8">Não foi possível carregar agora. Tentando de novo em instantes…</td></tr>';
+      setTimeout(mercado, 20000);
+      return;
+    }
+    M.dados = res.moedas;
+    desenhar();
+    const d = res.global;
+    if (d) {
+      document.getElementById("m-cap").textContent = fmt(d.total_market_cap[M.ref], M.ref, true);
+      const v = d.market_cap_change_percentage_24h_usd, el = document.getElementById("m-cap-var");
+      el.textContent = pct(v) + " em 24h"; el.className = cls(v);
+      document.getElementById("m-vol").textContent = fmt(d.total_volume[M.ref], M.ref, true);
+      document.getElementById("m-btc").textContent = d.market_cap_percentage.btc.toFixed(1).replace(".", ",") + "%";
+      document.getElementById("m-eth").textContent = d.market_cap_percentage.eth.toFixed(1).replace(".", ",") + "%";
+    }
+    const agora = new Date(res.em || Date.now()).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+    document.getElementById("m-fonte").textContent = `Fonte: ${res.fonte}, ${agora}. Informativo, não é recomendação de investimento.`;
   }
   document.querySelectorAll("[data-ordem]").forEach((b) => b.addEventListener("click", () => {
     M.ordem = b.dataset.ordem;
