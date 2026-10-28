@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; base-uri 'self'; form-action 'none'; object-src 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>CoinCubo — Links</title>
-<meta name="description" content="Research cripto em português: site, newsletter e grupo do Telegram da CoinCubo.">
+<meta name="description" content="Research cripto em português: site, ebook Cripto sem hype, newsletter e grupo do Telegram da CoinCubo.">
 <meta property="og:title" content="CoinCubo — Links">
 <meta property="og:description" content="Site, newsletter e grupo do Telegram da CoinCubo.">
 <meta property="og:image" content="https://coincubo.com/assets/cubo.png">
@@ -66,6 +66,8 @@
   /* Destaque: o site, primeiro da lista. */
   .link.principal { background:radial-gradient(400px 160px at 0% 0%, rgba(132,15,234,.32), transparent 70%), radial-gradient(400px 160px at 100% 100%, rgba(6,201,223,.22), transparent 70%), var(--surface); }
   .link.principal::before { background:var(--topo); }
+  .link.ebook .ic { background:rgba(132,15,234,.14); color:#B36BFF; }
+  .link.ebook::before { background:var(--topo); }
   .link.newsletter .ic { background:rgba(235,73,159,.12); color:var(--pink); }
   .link.newsletter::before { background:var(--topo); }
   footer { margin-top:30px; font-size:12px; color:var(--muted); }
@@ -84,6 +86,10 @@
     <li><a class="link principal" href="https://coincubo.com">
       <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></span>
       <span class="txt"><b>Site da CoinCubo</b><small>Ranking cripto ao vivo e análises</small></span>
+      <span class="seta" aria-hidden="true">→</span></a></li>
+    <li><a class="link ebook" href="https://coincubo-ebook.raphaelbusquet.workers.dev" target="_blank" rel="noopener">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M9 7h7"/><path d="M9 11h5"/></svg></span>
+      <span class="txt"><b>Ebook: Cripto sem hype</b><small>O guia da CoinCubo, com dados e fontes</small></span>
       <span class="seta" aria-hidden="true">→</span></a></li>
     <li><a class="link newsletter" href="https://coincubo.substack.com" target="_blank" rel="noopener">
       <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span>
